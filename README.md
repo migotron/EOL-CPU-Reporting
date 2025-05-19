@@ -1,44 +1,64 @@
 # EOL-CPU-Reporting
-Project i did for work
 
-The point of this project is to automate the process of the EOL reports done for customers.
+## 🧠 Project Overview
+This project automates the process of generating End-of-Life (EOL) reports for customer devices. It streamlines the manual review of hardware and flags systems for replacement or upgrade based on CPU age, agent type, and hardware specs.
 
-The process is currently export the data report from Automate to an excel file.
-Convert the data into a table.
-Review the device's hardware to determine if replacement or upgrades are needed.
-If the CPU is older than 5 years, older than 10th gen Intel, or older than 4th gen AMD ryzen, then mark PC as EOL in highlighted Red the entire table row.
+---
 
+## 🛠️ Features Implemented
 
-What You Need to Do
-1. Update the file path in this line:
+### ✅ 1. Table Formatting
+- Automatically converts raw data into an Excel **table** (`ListObject`) if not already formatted.
+- Applies the **"Normal"** cell style to remove legacy formatting.
+- AutoFits all **columns and rows** for clean presentation.
 
-     `Set eolWB = Workbooks.Open("C:\Path\To\EOL_CPU_List.xlsx")`
-   
-   Replace it with the actual path to your EOL CPU list file.
-3. Ensure the EOL list is in column A of Sheet1 in that file.
-4. Run the macro:
-     Press Alt + F11 to open the VBA editor.
-     Insert a new module (Insert > Module).
-     Paste the code.
-     Press F5 or run it from Excel via Alt + F8.
+### ✅ 2. Data Normalization
+- Converts key columns to **numeric values**:
+  - **Column I**: `Agent Memory Total`
+  - **Column N**: `C Drive Free Percent` (handles text like `"85%"`)
+  - **Column O**: `Total Internal Drive`
+- Suppresses Excel's **"number stored as text"** warning.
 
+### ✅ 3. EOL CPU Highlighting
+- Compares values in **Column K** (`CPU`) against an external list of EOL CPUs.
+- Highlights matching rows in **red** (`RGB(255, 0, 0)`).
+- EOL CPU list is loaded from:
+  - A default path in the user's **Downloads** folder.
+  - Or a **file picker** if the file is not found.
 
-	
+### ✅ 4. Server Agent Highlighting
+- Checks **Column D** (`Agent Type`) for `"Server"`.
+- Highlights the row in **blue** (`RGB(0, 112, 192)`) if not already marked red for EOL.
 
+---
 
-	
-	
-		TODO LIST: 	
-		Otherwise we move to servers to mark them as servers, we check the Agent Type and highlight Blue for servers the entire table row
+## ⚙️ Setup Instructions
 
-		Once we marked the EOL PCs and servers, we can focus on the hardware upgrades such as RAM and Storage, which are marked only in the cell.
+### What You Need to Do
+1. Ensure your exported report is saved in a worksheet named `"Table"`.
+2. Place your EOL CPU list in a file named `EOL_CPU_List.xlsx` in your **Downloads** folder.
+   - The list should be in **Column A** of the first sheet.
+3. Open the Excel file and run the macro:
+   - Press `Alt + F11` to open the VBA editor.
+   - Insert a new module (`Insert > Module`) and paste the macro code.
+   - Press `F5` or run it from Excel via `Alt + F8`.
 
-		If the PC has less than 16GBs of RAM in Agent Memory Total, then we highlight the cell Purple for RAM upgrade.
+---
 
-		If the PC has less than 25% C Drive Free Space/Percent, then we highlight the cell Light Blue for SSD upgrade.
+## ✅ TODO List
 
-		If the PC does not have pro version of Windows ie Windows 10 Home or Windows 11 Home, then we highlight the cell Orange for Needs Pro version
+- [x] Highlight EOL CPUs in red.
+- [x] Highlight Servers in blue.
+- [x] Convert memory and storage columns to numeric values.
+- [ ] Highlight **RAM upgrade** if `Agent Memory Total` < 16GB (purple cell).
+- [ ] Highlight **SSD upgrade** if `C Drive Free Percent` < 25% (light blue cell).
+- [ ] Highlight **Needs Pro** if Windows version is Home (orange cell).
+- [ ] Highlight **Upgradeable to Win11 Pro** if on Win10 Pro and no issues (yellow row).
+- [ ] Highlight **Already on Win11 Pro** if no issues and already on Win11 Pro (green row).
 
-		If the PC does not have any issues like above and it is on Windows 10 Pro, then we can highlight the entire table row as Yellow for "Can be upgraded to Windows 11 Pro", except for the already highlighted cells, which we leave with their already fill cell color.
+---
 
-		If the PC does not have any issues like above and it is on Windows 11 Pro already, then we can highlight the entire table row as Green for "Already on windows 11 Pro", except for the already highlighted cells, which we leave with their already fill cell color.
+## 📄 VBA Code
+The macro is stored in `HighlightEOLCPUs` and can be found in the VBA editor under `Module1`.
+
+---
