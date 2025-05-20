@@ -1,64 +1,75 @@
-# EOL-CPU-Reporting
 
-## 🧠 Project Overview
-This project automates the process of generating End-of-Life (EOL) reports for customer devices. It streamlines the manual review of hardware and flags systems for replacement or upgrade based on CPU age, agent type, and hardware specs.
+# EOL CPU Reporting
 
----
+This Excel VBA tool highlights End-of-Life (EOL) CPUs in a system inventory report and applies conditional formatting based on system attributes like OS version, RAM, storage, and virtualization status.
 
-## 🛠️ Features Implemented
+## 🚀 Features
 
-### ✅ 1. Table Formatting
-- Automatically converts raw data into an Excel **table** (`ListObject`) if not already formatted.
-- Applies the **"Normal"** cell style to remove legacy formatting.
-- AutoFits all **columns and rows** for clean presentation.
+- Automatically formats raw data into an Excel table
+- Highlights EOL CPUs based on an external list
+- Flags systems with:
+  - Low RAM (< 16 GB)
+  - Low SSD space (< 25% free)
+  - Specific OS versions (Windows 10/11 variants)
+  - Virtual machines (VMware)
+- Color-coded for quick visual analysis
 
-### ✅ 2. Data Normalization
-- Converts key columns to **numeric values**:
-  - **Column I**: `Agent Memory Total`
-  - **Column N**: `C Drive Free Percent` (handles text like `"85%"`)
-  - **Column O**: `Total Internal Drive`
-- Suppresses Excel's **"number stored as text"** warning.
+## 📁 Requirements
 
-### ✅ 3. EOL CPU Highlighting
-- Compares values in **Column K** (`CPU`) against an external list of EOL CPUs.
-- Highlights matching rows in **red** (`RGB(255, 0, 0)`).
-- EOL CPU list is loaded from:
-  - A default path in the user's **Downloads** folder.
-  - Or a **file picker** if the file is not found.
+- Microsoft Excel (with macros enabled)
+- A reference file: `EOL_CPU_List.xlsx` (placed in your Downloads folder or selected manually)
 
-### ✅ 4. Server Agent Highlighting
-- Checks **Column D** (`Agent Type`) for `"Server"`.
-- Highlights the row in **blue** (`RGB(0, 112, 192)`) if not already marked red for EOL.
+## 🛠️ Setup
 
----
+1. Download or clone this repository.
+2. Open the Excel workbook.
+3. Press `Alt + F11` to open the VBA editor.
+4. Paste the contents of `HighlightEOLCPU.bas` into a new module.
+5. Save and close the editor.
 
-## ⚙️ Setup Instructions
+## ▶️ Usage
 
-### What You Need to Do
-1. Ensure your exported report is saved in a worksheet named `"Table"`.
-2. Place your EOL CPU list in a file named `EOL_CPU_List.xlsx` in your **Downloads** folder.
-   - The list should be in **Column A** of the first sheet.
-3. Open the Excel file and run the macro:
-   - Press `Alt + F11` to open the VBA editor.
-   - Insert a new module (`Insert > Module`) and paste the macro code.
-   - Press `F5` or run it from Excel via `Alt + F8`.
-
----
+1. Ensure your data is on a sheet named `Table`.
+2. Run the macro `HighlightEOLCPUs`.
+3. If the EOL list is not found in your Downloads folder, you will be prompted to select it manually.
+4. The macro will:
+   - Format the data as a table
+   - Normalize numeric columns
+   - Highlight rows based on CPU status and system attributes
 
 ## ✅ TODO List
 
 - [x] Highlight EOL CPUs in red.
 - [x] Highlight Servers in blue.
 - [x] Convert memory and storage columns to numeric values.
-- [ ] Highlight **RAM upgrade** if `Agent Memory Total` < 16GB (purple cell).
-- [ ] Highlight **SSD upgrade** if `C Drive Free Percent` < 25% (light blue cell).
-- [ ] Highlight **Needs Pro** if Windows version is Home (orange cell).
-- [ ] Highlight **Upgradeable to Win11 Pro** if on Win10 Pro and no issues (yellow row).
-- [ ] Highlight **Already on Win11 Pro** if no issues and already on Win11 Pro (green row).
+- [x] Highlight **RAM upgrade** if `Agent Memory Total` < 16GB (purple cell).
+- [x] Highlight **SSD upgrade** if `C Drive Free Percent` < 25% (light blue cells).
+- [x] Highlight **OS versions**:
+  - Win11 Pro → green
+  - Win10 Pro → yellow
+  - Win10/11 Home → amber
+- [x] Highlight **VMware systems** in brown.
+- [ ] Label **Needs Pro** if Windows version is Home.
+- [ ] Label **Upgradeable to Win11 Pro** if on Win10 Pro and no issues.
+- [ ] Label **Already on Win11 Pro** if no issues and already on Win11 Pro.
 
----
+## 📊 Future Enhancements
 
-## 📄 VBA Code
-The macro is stored in `HighlightEOLCPUs` and can be found in the VBA editor under `Module1`.
+### Code Enhancements
+- Modularize the rest of the logic
+- Add unit tests for each subroutine
+- Add logging (e.g., write actions to a hidden sheet or log file)
 
----
+### User Experience
+- Add a dashboard sheet with summary stats (e.g., % of EOL systems, upgrade candidates)
+
+
+## 🛡️ License
+
+This work is licensed under the Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0).  
+You are free to share and adapt the material, but not for commercial purposes. You must give appropriate credit.
+
+## 🚫 Non-Distribution Notice
+
+This project is proprietary and should not be redistributed without explicit permission from the author.  
+Unauthorized distribution or monetization is strictly prohibited.
