@@ -119,6 +119,7 @@ Sub HighlightEOLCPUs()
                 tblRowRange.Interior.Color = colorEOL
             End If
             If Trim(reportWS.Cells(cell.Row, 8).Value) = "Microsoft Windows 11 Pro x64" Then
+                tblRowRange.Interior.Color = colorDarkRed
                 reportWS.Cells(cell.Row, 2).Interior.Color = colorDarkRed
                 reportWS.Cells(cell.Row, 4).Interior.Color = colorDarkRed
                 reportWS.Cells(cell.Row, 8).Interior.Color = colorDarkRed
