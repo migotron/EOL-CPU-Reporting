@@ -30,7 +30,7 @@ Sub HighlightEOLCPUs()
     Dim rng As Range, r As Range
     
     Set reportWS = ThisWorkbook.Sheets("Table")
-    
+
     ' Format as table if not already
     If reportWS.ListObjects.Count = 0 Then
         reportWS.Cells.Style = "Normal"
@@ -45,6 +45,15 @@ Sub HighlightEOLCPUs()
     Else
         Set tbl = reportWS.ListObjects(1)
     End If
+    
+    ' Remove duplicates from "Computer Name" column (column B)
+    Dim computerNameCol As Long
+    computerNameCol = 2 ' Column B
+    
+    With tbl.Range
+        .RemoveDuplicates Columns:=computerNameCol, Header:=xlYes
+    End With
+
     
     ' Normalize numeric columns
     Application.ErrorCheckingOptions.NumberAsText = False
@@ -120,10 +129,6 @@ Sub HighlightEOLCPUs()
             End If
             If Trim(reportWS.Cells(cell.Row, 8).Value) = "Microsoft Windows 11 Pro x64" Then
                 tblRowRange.Interior.Color = colorDarkRed
-                reportWS.Cells(cell.Row, 2).Interior.Color = colorDarkRed
-                reportWS.Cells(cell.Row, 4).Interior.Color = colorDarkRed
-                reportWS.Cells(cell.Row, 8).Interior.Color = colorDarkRed
-                reportWS.Cells(cell.Row, 11).Interior.Color = colorDarkRed
             End If
         Else
             agentValue = Trim(LCase(reportWS.Cells(cell.Row, 4).Value))
@@ -174,46 +179,50 @@ Sub HighlightEOLCPUs()
             tblRowRange.Interior.Color = colorServer
         End If
     
-        ' === RAM Upgrade Check ===
-        If Not IsEmpty(reportWS.Cells(cell.Row, "I").Value) Then
-            If IsNumeric(reportWS.Cells(cell.Row, "I").Value) Then
-                If reportWS.Cells(cell.Row, "I").Value < 12000 Then
-                    ' Only highlight if the cell is not already marked for EOL, Server, VM, or Apple
-                    With reportWS.Cells(cell.Row, "I")
-                        If .Interior.Color <> colorEOL And _
-                           .Interior.Color <> colorServer And _
-                           .Interior.Color <> colorVMware Then
-                            .Interior.Color = colorRAMUpgrade
-                        End If
-                    End With
+        ' === Skip hardware upgrades for Surface devices ===
+        If InStr(1, LCase(mainboardValue), "surface") = 0 And _
+            Trim(LCase(manufacturerValue)) = "Microsoft Corporation" Then
+        
+            ' === RAM Upgrade Check ===
+            If Not IsEmpty(reportWS.Cells(cell.Row, "I").Value) Then
+                If IsNumeric(reportWS.Cells(cell.Row, "I").Value) Then
+                    If reportWS.Cells(cell.Row, "I").Value < 12000 Then
+                        With reportWS.Cells(cell.Row, "I")
+                            If .Interior.Color <> colorEOL And _
+                               .Interior.Color <> colorServer And _
+                               .Interior.Color <> colorVMware Then
+                                .Interior.Color = colorRAMUpgrade
+                            End If
+                        End With
+                    End If
                 End If
             End If
-        End If
-    
-    
-        ' === SSD Upgrade Check ===
-        Dim freePercent As Variant
-        freePercent = reportWS.Cells(cell.Row, "N").Value
         
-        If IsNumeric(freePercent) Then
-            If freePercent <= 0.25 And freePercent <= 1 Then
-                ' Only highlight if none of the target cells are already marked
-                If reportWS.Cells(cell.Row, "L").Interior.Color <> colorEOL And _
-                   reportWS.Cells(cell.Row, "L").Interior.Color <> colorServer And _
-                   reportWS.Cells(cell.Row, "L").Interior.Color <> colorVMware And _
-                   reportWS.Cells(cell.Row, "M").Interior.Color <> colorEOL And _
-                   reportWS.Cells(cell.Row, "M").Interior.Color <> colorServer And _
-                   reportWS.Cells(cell.Row, "M").Interior.Color <> colorVMware And _
-                   reportWS.Cells(cell.Row, "N").Interior.Color <> colorEOL And _
-                   reportWS.Cells(cell.Row, "N").Interior.Color <> colorServer And _
-                   reportWS.Cells(cell.Row, "N").Interior.Color <> colorVMware Then
+            ' === SSD Upgrade Check ===
+            Dim freePercent As Variant
+            freePercent = reportWS.Cells(cell.Row, "N").Value
         
-                    reportWS.Cells(cell.Row, "L").Interior.Color = colorLightBlue
-                    reportWS.Cells(cell.Row, "M").Interior.Color = colorLightBlue
-                    reportWS.Cells(cell.Row, "N").Interior.Color = colorLightBlue
+            If IsNumeric(freePercent) Then
+                If freePercent <= 0.25 And freePercent <= 1 Then
+                    If reportWS.Cells(cell.Row, "L").Interior.Color <> colorEOL And _
+                       reportWS.Cells(cell.Row, "L").Interior.Color <> colorServer And _
+                       reportWS.Cells(cell.Row, "L").Interior.Color <> colorVMware And _
+                       reportWS.Cells(cell.Row, "M").Interior.Color <> colorEOL And _
+                       reportWS.Cells(cell.Row, "M").Interior.Color <> colorServer And _
+                       reportWS.Cells(cell.Row, "M").Interior.Color <> colorVMware And _
+                       reportWS.Cells(cell.Row, "N").Interior.Color <> colorEOL And _
+                       reportWS.Cells(cell.Row, "N").Interior.Color <> colorServer And _
+                       reportWS.Cells(cell.Row, "N").Interior.Color <> colorVMware Then
+        
+                        reportWS.Cells(cell.Row, "L").Interior.Color = colorLightBlue
+                        reportWS.Cells(cell.Row, "M").Interior.Color = colorLightBlue
+                        reportWS.Cells(cell.Row, "N").Interior.Color = colorLightBlue
+                    End If
                 End If
             End If
+        
         End If
+
     
     Next cell
     
