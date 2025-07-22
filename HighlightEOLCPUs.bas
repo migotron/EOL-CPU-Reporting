@@ -180,8 +180,8 @@ Sub HighlightEOLCPUs()
         End If
     
         ' === Skip hardware upgrades for Surface devices ===
-        If InStr(1, LCase(mainboardValue), "surface") = 0 And _
-            Trim(LCase(manufacturerValue)) = "Microsoft Corporation" Then
+        ' If InStr(1, LCase(mainboardValue), "surface") = 0 And _
+        '    Trim(LCase(manufacturerValue)) = "Microsoft Corporation" Then
         
             ' === RAM Upgrade Check ===
             If Not IsEmpty(reportWS.Cells(cell.Row, "I").Value) Then
@@ -221,7 +221,7 @@ Sub HighlightEOLCPUs()
                 End If
             End If
         
-        End If
+        'End If
 
     
     Next cell
