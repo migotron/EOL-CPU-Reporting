@@ -160,7 +160,8 @@ Sub HighlightEOLCPUs()
                     Dim osValue As String
                     osValue = Trim(reportWS.Cells(cell.Row, 8).Value)
     
-                    If osValue = "Microsoft Windows 11 Pro x64" Then
+                    If osValue = "Microsoft Windows 11 Pro x64" Or _
+                        osValue = "Microsoft Windows 11 Enterprise x64" Then
                         tblRowRange.Interior.Color = colorGreen
                     ElseIf osValue = "Microsoft Windows 10 Pro x64" Then
                         tblRowRange.Interior.Color = colorYellow
