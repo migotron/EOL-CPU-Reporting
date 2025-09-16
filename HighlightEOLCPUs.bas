@@ -105,7 +105,7 @@ Sub HighlightEOLCPUs()
         MsgBox "No CPU data found in column K.", vbExclamation
         Exit Sub
     End If
-    Set cpuRange = reportWS.Range("K2:K" & lastCpuRow)
+    Set cpuRange = reportWS.Range("H2:H" & lastCpuRow)
     
     Set eolWB = Workbooks.Open(filePath)
     With eolWB.Sheets(1)
@@ -127,13 +127,13 @@ Sub HighlightEOLCPUs()
             If Not tblRowRange Is Nothing Then
                 tblRowRange.Interior.Color = colorEOL
             End If
-            If Trim(reportWS.Cells(cell.Row, 8).Value) = "Microsoft Windows 11 Pro x64" Then
+            If Trim(reportWS.Cells(cell.Row, 10).Value) = "Microsoft Windows 11 Pro x64" Then
                 tblRowRange.Interior.Color = colorDarkRed
             End If
         Else
             agentValue = Trim(LCase(reportWS.Cells(cell.Row, 4).Value))
-            mainboardValue = Trim(reportWS.Cells(cell.Row, 7).Value)
-            manufacturerValue = Trim(reportWS.Cells(cell.Row, 6).Value)
+            mainboardValue = Trim(reportWS.Cells(cell.Row, 6).Value)
+            manufacturerValue = Trim(reportWS.Cells(cell.Row, 5).Value)
             Dim isVM As Boolean
             isVM = (mainboardValue = "VMware Virtual Platform" Or mainboardValue = "Virtual Machine" Or manufacturerValue = "VMware, Inc.")
             Dim isMac As Boolean
@@ -146,8 +146,8 @@ Sub HighlightEOLCPUs()
                     End If
                 End If
                 If isVM Then
+                    reportWS.Cells(cell.Row, 5).Interior.Color = colorVMware
                     reportWS.Cells(cell.Row, 6).Interior.Color = colorVMware
-                    reportWS.Cells(cell.Row, 7).Interior.Color = colorVMware
                 End If
             ElseIf isVM Then
                 If Not tblRowRange Is Nothing Then
@@ -158,7 +158,7 @@ Sub HighlightEOLCPUs()
             Else
                 If tblRowRange.Interior.Color <> colorEOL And tblRowRange.Interior.Color <> colorServer And tblRowRange.Interior.Color <> colorVMware And Not isMac Then
                     Dim osValue As String
-                    osValue = Trim(reportWS.Cells(cell.Row, 8).Value)
+                    osValue = Trim(reportWS.Cells(cell.Row, 10).Value)
     
                     If osValue = "Microsoft Windows 11 Pro x64" Or _
                         osValue = "Microsoft Windows 11 Enterprise x64" Then
